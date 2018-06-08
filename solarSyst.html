@@ -27,15 +27,15 @@ Equilibrer les coeff (G, f, m/r..)
         <div id="colorForm">Couleur :<br>
 
             <label for="colorNone">
-                <input class="line" id="colorNone" type="radio" name="Color" value="Aucune"checked>Aucun
+                <input class="line" id="colorNone" type="radio" name="Color" value="Aucune" checked>Aucun
             </label>
 
             <label for="colorPosition">
-                <input class="line" id="colorPosition" type="radio" name="Color">Position
+                <input class="line" id="colorPosition" type="radio" name="Color" value="Position">Position
             </label>
 
             <label for="colorVitesse">
-                <input class="line" id="colorVitesse" type="radio" name="Color">Vitesse
+                <input class="line" id="colorVitesse" type="radio" name="Color" value="Vitesse">Vitesse
             </label>
 
             <div id="colorType">Aucune couleur</div>
@@ -104,7 +104,12 @@ Equilibrer les coeff (G, f, m/r..)
         clear();
     }
 
+    function setInfos() {
+        if(document.getElementById('colorPosition').checked){document.getElementById('colorStyle').innerHTML = document.getElementById('colorPosition').value}
+    }
+
     function play(listeP, auto) {
+        setInfos();
         if (auto) {
             clear();
             setInterval(function () {
@@ -157,18 +162,18 @@ Equilibrer les coeff (G, f, m/r..)
             }
         }
 
-        force(soleil) {
+        force(sun) {
             let G = 600;  // Constante gravitationnelle 6.67 E-11  m3 kg-1 s-2
-            let dist = Math.sqrt((soleil.x - this.x) ** 2 + (soleil.y - this.y) ** 2);
-            let coef = (G * this.r / 10 * soleil.r / 10) / (dist ** 3);  // (G * mA * mB) / d3
-            return [coef * (soleil.x - this.x), coef * (soleil.y - this.y)];
+            let dist = Math.sqrt((sun.x - this.x) ** 2 + (sun.y - this.y) ** 2);
+            let coef = (G * this.r / 10 * sun.r / 10) / (dist ** 3);  // (G * mA * mB) / d3
+            return [coef * (sun.x - this.x), coef * (sun.y - this.y)];
         }
 
-        move(soleil) {
+        move(sun) {
             if (!this.sun) {
                 let dt = 0.1;
 
-                let force = this.force(soleil);
+                let force = this.force(sun);
 
                 let ax = force[0];
                 let ay = force[1];

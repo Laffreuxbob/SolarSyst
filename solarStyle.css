@@ -68,6 +68,8 @@ body {
     height: 100%;
     border: 1px solid dimgrey;
     padding: 2%;
+    -webkit-background-size: cover;
+    background-size: cover;
 
 }
 
