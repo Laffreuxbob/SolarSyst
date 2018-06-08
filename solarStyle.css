@@ -1,0 +1,94 @@
+
+
+* {
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+body {
+
+    background: rgba(255, 255, 255, 0.4) url("space.jpg") no-repeat;
+    background-blend-mode: lighten;
+    -webkit-background-size: cover;
+    background-size: cover;
+}
+
+#all {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#title {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 25%;
+    width: 60%;
+    border: 3px double dimgrey;
+    margin: auto;
+    background-color: rgb(75, 78, 133);
+    border-top-left-radius: 30% 50%;
+    border-top-right-radius: 30% 50%;
+    text-align: center;
+}
+
+#title #nbAstres {
+    width: 100%
+}
+
+#title #colorForm {
+    width: 50%;
+}
+
+#title #styleForm {
+    width: 50%;
+    border: 1px solid grey;
+}
+
+#title #start {
+    margin: auto;
+    margin-top: 5%;
+}
+
+#title label {
+    margin-top: 3%;
+}
+
+#mainContent {
+    display: flex;
+    flex-wrap: nowrap;
+    bottom: 0;
+
+}
+
+#graph {
+    width: 100%;
+    height: 100%;
+    border: 1px solid dimgrey;
+    padding: 2%;
+
+}
+
+#stats {
+    width: 100%;
+    height: 100%;
+    border: 1px solid dimgrey;
+    padding: 2%;
+
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
+#myCanvasGraph {
+}
+
+#myCanvasGraph {
+}
+
+
+
