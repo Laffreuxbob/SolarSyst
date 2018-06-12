@@ -23,43 +23,51 @@ Equilibrer les coeff (G, f, m/r..)
         <label for="nb" id="nbAstres">Nombre d'Astres :
             <input type="number" name="nb" id="nb" min="1" max="10">
         </label>
-        <br>
-        <div id="colorForm">Couleur :<br>
+        <div class="groupForm">
+            <div id="colorForm">
+                <div>Couleur</div>
+                <div class="liste">
+                    <label for="colorNone">
+                        <input class="line" id="colorNone" type="radio" name="Color" value="Aucune" checked>Aucun
+                    </label>
 
-            <label for="colorNone">
-                <input class="line" id="colorNone" type="radio" name="Color" value="Aucune" checked>Aucun
-            </label>
+                    <label for="colorPosition">
+                        <input class="line" id="colorPosition" type="radio" name="Color" value="Position">Position
+                    </label>
 
-            <label for="colorPosition">
-                <input class="line" id="colorPosition" type="radio" name="Color" value="Position">Position
-            </label>
+                    <label for="colorVitesse">
+                        <input class="line" id="colorVitesse" type="radio" name="Color" value="Vitesse">Vitesse
+                    </label>
+                </div>
+                <div id="colorType">Couleur fixe.</div>
 
-            <label for="colorVitesse">
-                <input class="line" id="colorVitesse" type="radio" name="Color" value="Vitesse">Vitesse
-            </label>
+            </div>
+            <div id="styleForm">
+                <div>Style</div>
+                <div class="liste">
+                    <label for="styleNone">
+                        <input class="line" id="styleNone" type="radio" name="Style" checked>Aucun
+                    </label>
 
-            <div id="colorType">Aucune couleur</div>
+                    <label for="styleLine">
+                        <input class="line" id="styleLine" type="radio" name="Style">Ligne
+                    </label>
 
+                    <label for="styleTrajectoire">
+                        <input class="line" id="styleTrajectoire" type="radio" name="Style">Trajectoire
+                    </label>
+                </div>
+                <div id="styleType">Aucun style</div>
+
+            </div>
         </div>
-        <div id="styleForm">Style :<br>
 
-            <label for="styleNone">
-                <input class="line" id="styleNone" type="radio" name="Style" checked>Aucun
-            </label>
-
-            <label for="styleLine">
-                <input class="line" id="styleLine" type="radio" name="Style">Ligne
-            </label>
-
-            <label for="styleTrajectoire">
-                <input class="line" id="styleTrajectoire" type="radio" name="Style">Trajectoire
-            </label>
-
-            <div id="styleType">Aucun style</div>
-
+        <div class="footer">
+            <!--<input type="submit" id="start" value="Start" onclick="start()">-->
+            <button id="start" onclick="start()">Start</button>
+            <button id="stop" onclick="stop()">Stop</button>
         </div>
-        <input type="submit" id="start" value="Start" onclick="start()">
-        <button onclick="stop()">stop</button>
+
     </div>
 
     <div id="mainContent">
@@ -104,12 +112,19 @@ Equilibrer les coeff (G, f, m/r..)
         clear();
     }
 
-    function setInfos() {
-        if(document.getElementById('colorPosition').checked){document.getElementById('colorStyle').innerHTML = document.getElementById('colorPosition').value}
+    function getStyleType() {
+        let getColorType = document.getElementsByName('Color');
+        let divInfoColor = document.getElementById("colorType");
+        divInfoColor.innerHTML = "Couleur fixe";
+        for (let s = 1; s < getColorType.length; s++) {
+            if (getColorType[s].checked) {
+                divInfoColor.innerHTML = "Couleur : " + getColorType[s]['value'] + ".";
+                return (getColorType[s]['value']);
+            }
+        }
     }
 
     function play(listeP, auto) {
-        setInfos();
         if (auto) {
             clear();
             setInterval(function () {
@@ -118,6 +133,7 @@ Equilibrer les coeff (G, f, m/r..)
                     clear();
                 }
                 listeP.drawL();
+                getStyleType();
             }, 30);
         }
     }
@@ -158,7 +174,28 @@ Equilibrer les coeff (G, f, m/r..)
             if (this.sun) {
                 this.color = "yellow"
             } else {
-                this.color = "blue"
+                if (document.getElementById('colorPosition').checked) {
+                    this.setColorPosition();
+                }
+                else if (document.getElementById('colorVitesse').checked) {
+                    this.setColorVitesse();
+                }
+
+
+            }
+        }
+
+        setColorPosition() {
+            console.log(H);
+            console.log(W);
+            this.color = "rgb(" + (this.x / W) * 255 + "," + (Math.sqrt(this.x ** 2 + this.y ** 2) / Math.sqrt(H ** 2 + W ** 2)) * 255 + "," + (this.y / H) * 255 + ")";
+            this.color = "rgb(" + Math.abs(Math.sin(this.x)) * 255 + "," + Math.abs(Math.sin(Math.sqrt(this.x ** 2 + this.y ** 2))) + "," + Math.abs(Math.sin(this.y)) * 255;
+            console.log(this.color);
+        }
+
+        setColorVitesse() {
+            if (Math.sqrt(this.vx ** 2 + this.vy ** 2) < 50) {
+                this.color = 'green';
             }
         }
 
@@ -206,7 +243,6 @@ Equilibrer les coeff (G, f, m/r..)
         }
 
         moveL() {
-            let listeV = [];
             let sun = this.listeInit[0];
             for (let i = 0; i < this.listeInit.length; i++) {
                 this.listeInit[i].move(sun);
@@ -214,12 +250,14 @@ Equilibrer les coeff (G, f, m/r..)
         }
 
         drawL() {
-            if(!document.getElementById("styleTrajectoire").checked){
+            if (!document.getElementById("styleTrajectoire").checked) {
                 clear();
             }
             for (let p = 0; p < this.listeInit.length; p++) {
                 let planete = this.listeInit[p];
-                planete.setColor();
+                /*
+                                planete.setColorPosition();
+                */
                 ctx1.beginPath();
                 planete.draw(ctx1);
                 ctx1.stroke();
@@ -241,9 +279,8 @@ Equilibrer les coeff (G, f, m/r..)
     let ctx2 = c2.getContext("2d");
 
     ctx2.beginPath();
-    console.log("test");
 
-    ctx2.arc(5,5,5,0,2*Math.PI);
+    ctx2.arc(5, 5, 5, 0, 2 * Math.PI);
 
     ctx2.fillStyle = "green";
     ctx2.fill();
