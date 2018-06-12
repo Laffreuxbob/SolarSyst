@@ -65,12 +65,12 @@ static getColorType() {
     }
 }
 */
-setColorPosition() {
+function setColorPosition() {
     if (!this.sun) {
         this.color = "rgb(" + (this.x / W) * 240 + 20 + "," + (Math.sqrt(this.x ** 2 + this.y ** 2) / H) * 255 + "," + (this.x / H) * 240 + 20 + ")";
     }
 }
-setColorVelocity() {
+function setColorVelocity() {
     if (!this.sun) {
         if ((Math.sqrt(this.vx ** 2 + this.vy ** 2) / 2) > 15) {
             this.color = "red";
