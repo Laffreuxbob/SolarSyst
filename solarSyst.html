@@ -13,6 +13,7 @@ Equilibrer les coeff (G, f, m/r..)
 <head>
     <meta charset="UTF-8">
     <title>Solar</title>
+    <link rel="icon" type="image/png" href="space.jpg" />
     <link rel="stylesheet" href="solarStyle.css">
 </head>
 
@@ -20,8 +21,10 @@ Equilibrer les coeff (G, f, m/r..)
 
 <div id="all">
     <div id="title">
-        <label for="nb" id="nbAstres">Nombre d'Astres :
-            <input type="number" name="nb" id="nb" min="1" max="10">
+        <label for="nb" id="nbAstres"> <span>Nombre d'Astres :</span>
+            <input type="range" name="nb" id="nb" value="2" min="2" max="10"
+                   oninput="document.getElementById('AfficheRange').textContent=value">
+            <span id="AfficheRange">2</span>
         </label>
         <div class="groupForm">
             <div id="colorForm">
@@ -62,23 +65,27 @@ Equilibrer les coeff (G, f, m/r..)
             </div>
         </div>
 
-        <div class="footer">
-            <!--<input type="submit" id="start" value="Start" onclick="start()">-->
-            <button id="start" onclick="start()">Start</button>
-            <button id="stop" onclick="stop()">Stop</button>
-        </div>
 
     </div>
 
     <div id="mainContent">
         <div id="graph">
             <canvas id="myCanvasGraph" style="background: url(space.jpg)  0 0 ; "></canvas>
+            <span><input type="checkbox" id="cadre">Autoriser la sortie du cadre </span>
         </div>
         <div id="stats">
             <canvas id="myCanvasStats" style="background: #d8d8d8 "></canvas>
+            <span>Vitesses V =  &radic; (Vx² + Vy²) / 2 </span>
         </div>
     </div>
+    <div id="footer">
+        <!--<input type="submit" id="start" value="Start" onclick="start()">-->
+        <button id="start" onclick="start()">Start</button>
+        <button id="stop" onclick="stop()">Stop</button>
+    </div>
+
 </div>
+
 
 </body>
 

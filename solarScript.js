@@ -1,11 +1,19 @@
-
 // Element canva de base
 let c1;
 c1 = document.getElementById("myCanvasGraph");
-let ctx1 = c1.getContext("2d");
+let graphCtx = c1.getContext("2d");
+
+let c2;
+c2 = document.getElementById("myCanvasStats");
+let statCtx = c2.getContext("2d");
+
 // Constantes pour l'init des coordonnées
-let H = c1.height;
-let W = c1.width;
+let graphH = c1.height;
+let graphW = c1.width;
+
+let statH = c2.height;
+let statW = c2.width;
+console.log(statW);
 // Auto play
 let auto;
 
@@ -56,7 +64,11 @@ function play(listeP, auto) {
 
 //Clear ctx
 function clear() {
-    ctx1.clearRect(0, 0, W, H);
+    graphCtx.clearRect(0, 0, graphW, graphH);
+}
+
+function clearStats(){
+    statCtx.clearRect(0,0,graphW,graphH)
 }
 
 class Astre {
@@ -72,21 +84,40 @@ class Astre {
         this.color = color;
     }
 
-    draw(doc) { // Beginpath et stroke sont dans drawL
+    draw(doc1, doc2, index=2, total) { // Beginpath et stroke sont dans drawL
         if (document.getElementById('styleLine').checked) {
-            doc.strokeStyle = 'grey';
-            doc.moveTo(W / 2, H / 2);
-            doc.lineTo(this.x, this.y);
-            doc.stroke();
+            doc1.strokeStyle = 'grey';
+            doc1.moveTo(graphW / 2, graphH / 2);
+            doc1.lineTo(this.x, this.y);
+            doc1.stroke();
         }
         this.setColor();
-        doc.beginPath();
-        doc.arc(this.x, this.y, this.r / 10, 0, 2 * Math.PI);
-        doc.fillStyle = this.color;
-        doc.fill();
-    }
+        doc1.beginPath();
+        doc1.arc(this.x, this.y, this.r , 0, 2 * Math.PI);
+        doc1.fillStyle = this.color;
+        doc1.fill();
 
+
+        if(!this.sun){
+            let vit = (Math.sqrt(this.vx ** 2 + this.vy ** 2) / 2);
+            let v = vit.toFixed(4);
+            doc2.beginPath();
+            doc2.strokeStyle = 'grey';
+            doc2.moveTo(200, 390 );
+            doc2.lineTo(200, 400 - vit*4);
+            let info = "p"+index;
+            doc2.fillText(v,(statW/total)*index,statH - statH/15);
+            doc2.fillText(info,(statW/total)*index,vit*4);
+
+            doc2.moveTo((statW/total)*index,statH - statH/15);
+            doc2.lineTo((statW/total)*index,vit*4);
+
+            doc2.stroke();
+        }
+
+    }
     setColor() {
+        this.color = "blue";
         if (this.sun) {
             this.color = "yellow"
         } else {
@@ -96,27 +127,30 @@ class Astre {
             else if (document.getElementById('colorVitesse').checked) {
                 this.setColorVitesse();
             }
-
-
         }
     }
 
     setColorPosition() {
-        console.log(H);
-        console.log(W);
-        this.color = "rgb(" + (this.x / W) * 255 + "," + (Math.sqrt(this.x ** 2 + this.y ** 2) / Math.sqrt(H ** 2 + W ** 2)) * 255 + "," + (this.y / H) * 255 + ")";
-        this.color = "rgb(" + Math.abs(Math.sin(this.x)) * 255 + "," + Math.abs(Math.sin(Math.sqrt(this.x ** 2 + this.y ** 2))) + "," + Math.abs(Math.sin(this.y)) * 255;
+        console.log(graphH);
+        console.log(graphW);
+        this.color = "rgb(" + (this.x / graphW) * 255 + "," + (Math.sqrt(this.x ** 2 + this.y ** 2) / Math.sqrt(graphH ** 2 + graphW ** 2)) * 255 + "," + (this.y / graphH) * 255 + ")";
+        this.color = "rgb(" + Math.abs(Math.sin(this.x)) * 255 + "," + Math.abs(Math.sin(Math.sqrt(this.x ** 2 + this.y ** 2))) + "," + Math.abs(Math.sin(this.y)) * 255+ ")";
         console.log(this.color);
     }
 
     setColorVitesse() {
-        if (Math.sqrt(this.vx ** 2 + this.vy ** 2) < 50) {
-            this.color = 'green';
+        let vTot = Math.sqrt(this.vx ** 2 + this.vy ** 2) / 2;
+        if (vTot > 80) {
+            this.color = 'red';
+        } else if (vTot > 50) {
+            this.color = "orange";
+        } else if (vTot > 30) {
+            this.color = "yellow";
         }
     }
 
     force(sun) {
-        let G = 600;  // Constante gravitationnelle 6.67 E-11  m3 kg-1 s-2
+        let G = 20000;  // Constante gravitationnelle 6.67 E-11  m3 kg-1 s-2
         let dist = Math.sqrt((sun.x - this.x) ** 2 + (sun.y - this.y) ** 2);
         let coef = (G * this.r / 10 * sun.r / 10) / (dist ** 3);  // (G * mA * mB) / d3
         return [coef * (sun.x - this.x), coef * (sun.y - this.y)];
@@ -134,12 +168,31 @@ class Astre {
             this.x = this.x + this.vx * dt + ax * dt * dt * (1 / 2);
             this.y = this.y + this.vy * dt + ay * dt * dt * (1 / 2);
 
-            this.x = cadre(this.x, W);
-            this.y = cadre(this.y, H);
+
+            if(!document.getElementById('cadre').checked){
+                this.x = cadre(this.x, graphW-1);
+                this.y = cadre(this.y, graphH-1);
+            }
+
 
             this.vx = this.vx + ax * dt;
             this.vy = this.vy + ay * dt;
+
+/*
+            console.log(("vy : " + this.vy + " -- vx : " + this.vx));
+*/
+
+            clearStats();
+
+
+            return((Math.sqrt(this.vx ** 2 + this.vy ** 2) / 2));
+
         }
+
+    }
+
+    static getVitesse() {
+        return [, this.vx, this.vy];
     }
 }
 
@@ -150,11 +203,11 @@ class ListeAstres {
     }
 
     init() {
-        let dist = H / (2 * this.len);
-        this.listeInit[0] = new Astre(true, W / 2, H / 2, 0, 0, 100, "yellow");
+        let dist = graphH / (2 * this.len);
+        this.listeInit[0] = new Astre(true, graphW / 2, graphH / 2, 0, 0, 10, "yellow");
         for (let i = 1; i < this.len; i++) {
             let v = (20 - i) * (-1) ** i;
-            this.listeInit.push(new Astre(false, W / 2, H / 2 + i * dist, v, v, 40, 'blue'));
+            this.listeInit.push(new Astre(false, graphW / 2, graphH / 2 + i * dist, v, v, 4, 'blue'));
         }
     }
 
@@ -166,17 +219,19 @@ class ListeAstres {
     }
 
     drawL() {
+
+        let nb= this.listeInit.length;
         if (!document.getElementById("styleTrajectoire").checked) {
             clear();
         }
-        for (let p = 0; p < this.listeInit.length; p++) {
+        for (let p = 0; p < nb; p++) {
             let planete = this.listeInit[p];
             /*
                             planete.setColorPosition();
             */
-            ctx1.beginPath();
-            planete.draw(ctx1);
-            ctx1.stroke();
+            graphCtx.beginPath();
+            planete.draw(graphCtx, statCtx, p, nb);
+            graphCtx.stroke();
         }
     }
 }
@@ -190,15 +245,5 @@ function cadre(t, Max) {
     return t;
 }
 
-let c2;
-c2 = document.getElementById("myCanvasStats");
-let ctx2 = c2.getContext("2d");
 
-ctx2.beginPath();
-
-ctx2.arc(5, 5, 5, 0, 2 * Math.PI);
-
-ctx2.fillStyle = "green";
-ctx2.fill();
-ctx2.stroke();
 

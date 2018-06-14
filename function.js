@@ -67,7 +67,7 @@ static getColorType() {
 */
 function setColorPosition() {
     if (!this.sun) {
-        this.color = "rgb(" + (this.x / W) * 240 + 20 + "," + (Math.sqrt(this.x ** 2 + this.y ** 2) / H) * 255 + "," + (this.x / H) * 240 + 20 + ")";
+        this.color = "rgb(" + (this.x / graphW) * 240 + 20 + "," + (Math.sqrt(this.x ** 2 + this.y ** 2) / graphH) * 255 + "," + (this.x / graphH) * 240 + 20 + ")";
     }
 }
 function setColorVelocity() {
