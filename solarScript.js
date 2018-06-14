@@ -1,4 +1,4 @@
-// Element canva de base
+// Canvas
 let c1;
 c1 = document.getElementById("myCanvasGraph");
 let graphCtx = c1.getContext("2d");
@@ -8,35 +8,39 @@ c2 = document.getElementById("myCanvasStats");
 let statCtx = c2.getContext("2d");
 
 // Constantes pour l'init des coordonnées
+
 let graphH = c1.height;
 let graphW = c1.width;
 
 let statH = c2.height;
 let statW = c2.width;
-console.log(statW);
+
 // Auto play
 let auto;
 
-//Fonction mère
+//Fonction main
 function start() {
-    auto = true;
-    clear();
+    clearGraph();
+    auto = !auto;
     let liste;
     let nb = document.getElementById("nb").value;
-    if (nb <= 0) {
+    if (!nb) {
         nb = 2;
     }
     liste = new ListeAstres(nb);
     liste.init();
     play(liste, auto);
 }
-
+//Arret et clear total => en construction
 function stop() {
     auto = false;
-    clear();
+    clearGraph();
+    clearStats();
+    window.stop();
 }
 
-function getStyleType() {
+// Changement du type de couleur
+function getColorType() {
     let getColorType = document.getElementsByName('Color');
     let divInfoColor = document.getElementById("colorType");
     divInfoColor.innerHTML = "Couleur fixe";
@@ -48,22 +52,23 @@ function getStyleType() {
     }
 }
 
-function play(listeP, auto) {
+//Jouer en boucle => en construction
+function play(listeP, auto){
     if (auto) {
-        clear();
-        setInterval(function () {
+        clearGraph();
+        setInterval(function () {  // set interval 30 ms
             listeP.moveL();
             if (!document.getElementById("styleTrajectoire").checked) {
-                clear();
+                clearGraph();
             }
             listeP.drawL();
-            getStyleType();
+            getColorType();
         }, 30);
     }
 }
 
 //Clear ctx
-function clear() {
+function clearGraph() {
     graphCtx.clearRect(0, 0, graphW, graphH);
 }
 
@@ -71,6 +76,7 @@ function clearStats(){
     statCtx.clearRect(0,0,graphW,graphH)
 }
 
+// Objet Astre
 class Astre {
     constructor(sun, x, y, vx, vy, r, color) {
         this.sun = sun;
@@ -84,8 +90,9 @@ class Astre {
         this.color = color;
     }
 
+    // Dessiner un astre
     draw(doc1, doc2, index=2, total) { // Beginpath et stroke sont dans drawL
-        if (document.getElementById('styleLine').checked) {
+        if (document.getElementById('styleLine').checked) { // Tracé le trait si demandé
             doc1.strokeStyle = 'grey';
             doc1.moveTo(graphW / 2, graphH / 2);
             doc1.lineTo(this.x, this.y);
@@ -98,7 +105,7 @@ class Astre {
         doc1.fill();
 
 
-        if(!this.sun){
+        if(!this.sun){ // Affichage stat vitesse
             let vit = (Math.sqrt(this.vx ** 2 + this.vy ** 2) / 2);
             let v = vit.toFixed(4);
             doc2.beginPath();
@@ -116,6 +123,8 @@ class Astre {
         }
 
     }
+
+    // Mettre a jour la couleur de remplissage
     setColor() {
         this.color = "blue";
         if (this.sun) {
@@ -130,14 +139,20 @@ class Astre {
         }
     }
 
+    //Couleur en fonction de x et y
     setColorPosition() {
-        console.log(graphH);
-        console.log(graphW);
+/*
         this.color = "rgb(" + (this.x / graphW) * 255 + "," + (Math.sqrt(this.x ** 2 + this.y ** 2) / Math.sqrt(graphH ** 2 + graphW ** 2)) * 255 + "," + (this.y / graphH) * 255 + ")";
-        this.color = "rgb(" + Math.abs(Math.sin(this.x)) * 255 + "," + Math.abs(Math.sin(Math.sqrt(this.x ** 2 + this.y ** 2))) + "," + Math.abs(Math.sin(this.y)) * 255+ ")";
+*/
+        let r = Math.abs(Math.sin(this.x/graphW)) * 255;
+        let g = Math.abs(Math.sin(Math.sqrt(this.x ** 2 + this.y ** 2)/Math.min(graphH, graphW))) * 255;
+        let b = Math.abs(Math.sin(this.y/graphH)) * 255;
+        console.log("r : " + r + "   g : " + g + "   b : " + b);
+        this.color = "rgb(" + r + "," +  g + "," + b + ")";
         console.log(this.color);
     }
 
+    // Couleur en fonction de la vitesse
     setColorVitesse() {
         let vTot = Math.sqrt(this.vx ** 2 + this.vy ** 2) / 2;
         if (vTot > 80) {
@@ -149,6 +164,7 @@ class Astre {
         }
     }
 
+    // Calcul force par rapport au soleil
     force(sun) {
         let G = 20000;  // Constante gravitationnelle 6.67 E-11  m3 kg-1 s-2
         let dist = Math.sqrt((sun.x - this.x) ** 2 + (sun.y - this.y) ** 2);
@@ -156,6 +172,7 @@ class Astre {
         return [coef * (sun.x - this.x), coef * (sun.y - this.y)];
     }
 
+    // Deplacement par rapport au soleil
     move(sun) {
         if (!this.sun) {
             let dt = 0.1;
@@ -168,40 +185,34 @@ class Astre {
             this.x = this.x + this.vx * dt + ax * dt * dt * (1 / 2);
             this.y = this.y + this.vy * dt + ay * dt * dt * (1 / 2);
 
+            this.vx = this.vx + ax * dt;
+            this.vy = this.vy + ay * dt;
+
 
             if(!document.getElementById('cadre').checked){
                 this.x = cadre(this.x, graphW-1);
                 this.y = cadre(this.y, graphH-1);
             }
 
-
-            this.vx = this.vx + ax * dt;
-            this.vy = this.vy + ay * dt;
-
 /*
             console.log(("vy : " + this.vy + " -- vx : " + this.vx));
 */
 
             clearStats();
-
-
             return((Math.sqrt(this.vx ** 2 + this.vy ** 2) / 2));
-
         }
-
-    }
-
-    static getVitesse() {
-        return [, this.vx, this.vy];
     }
 }
 
+
+// Classe liste d'astres
 class ListeAstres {
     constructor(len) {
         this.len = len;
         this.listeInit = [];
     }
 
+    // Instanciation de la liste d'astres totale (soleil + planetes)
     init() {
         let dist = graphH / (2 * this.len);
         this.listeInit[0] = new Astre(true, graphW / 2, graphH / 2, 0, 0, 10, "yellow");
@@ -211,6 +222,7 @@ class ListeAstres {
         }
     }
 
+    // Deplacer une liste d'astres
     moveL() {
         let sun = this.listeInit[0];
         for (let i = 0; i < this.listeInit.length; i++) {
@@ -218,11 +230,11 @@ class ListeAstres {
         }
     }
 
+    // Dessiner une liste d'astres
     drawL() {
-
         let nb= this.listeInit.length;
         if (!document.getElementById("styleTrajectoire").checked) {
-            clear();
+            clearGraph();
         }
         for (let p = 0; p < nb; p++) {
             let planete = this.listeInit[p];
@@ -236,6 +248,7 @@ class ListeAstres {
     }
 }
 
+// Si la planete sort du cadre, elle réapparait de l'autre coté
 function cadre(t, Max) {
     if (t > Max) {
         t = 0;

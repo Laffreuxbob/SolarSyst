@@ -1,8 +1,7 @@
 <!--
 Start ne réinitialise pas, et laisse les anciennes planetes
 
-Style line et style traj s'appliquent sur 1 Astres // L'écran en général, deux accès a style traj
-=> input radio 'aucun'
+Style ligne => style traj laisse le dernier segment tracé
 
 Equilibrer les coeff (G, f, m/r..)
 
@@ -13,12 +12,11 @@ Equilibrer les coeff (G, f, m/r..)
 <head>
     <meta charset="UTF-8">
     <title>Solar</title>
-    <link rel="icon" type="image/png" href="space.jpg" />
+    <link rel="icon" type="image/png" href="space.jpg"/>
     <link rel="stylesheet" href="solarStyle.css">
 </head>
 
 <body>
-
 <div id="all">
     <div id="title">
         <label for="nb" id="nbAstres"> <span>Nombre d'Astres :</span>
@@ -33,17 +31,14 @@ Equilibrer les coeff (G, f, m/r..)
                     <label for="colorNone">
                         <input class="line" id="colorNone" type="radio" name="Color" value="Aucune" checked>Aucun
                     </label>
-
                     <label for="colorPosition">
                         <input class="line" id="colorPosition" type="radio" name="Color" value="Position">Position
                     </label>
-
                     <label for="colorVitesse">
                         <input class="line" id="colorVitesse" type="radio" name="Color" value="Vitesse">Vitesse
                     </label>
                 </div>
                 <div id="colorType">Couleur fixe.</div>
-
             </div>
             <div id="styleForm">
                 <div>Style</div>
@@ -51,27 +46,21 @@ Equilibrer les coeff (G, f, m/r..)
                     <label for="styleNone">
                         <input class="line" id="styleNone" type="radio" name="Style" checked>Aucun
                     </label>
-
                     <label for="styleLine">
                         <input class="line" id="styleLine" type="radio" name="Style">Ligne
                     </label>
-
                     <label for="styleTrajectoire">
                         <input class="line" id="styleTrajectoire" type="radio" name="Style">Trajectoire
                     </label>
                 </div>
                 <div id="styleType">Aucun style</div>
-
             </div>
         </div>
-
-
     </div>
-
     <div id="mainContent">
         <div id="graph">
             <canvas id="myCanvasGraph" style="background: url(space.jpg)  0 0 ; "></canvas>
-            <span><input type="checkbox" id="cadre">Autoriser la sortie du cadre </span>
+            <span><label for="cadre"></label><input type="checkbox" id="cadre">Autoriser la sortie du cadre </span>
         </div>
         <div id="stats">
             <canvas id="myCanvasStats" style="background: #d8d8d8 "></canvas>
@@ -79,15 +68,12 @@ Equilibrer les coeff (G, f, m/r..)
         </div>
     </div>
     <div id="footer">
-        <!--<input type="submit" id="start" value="Start" onclick="start()">-->
         <button id="start" onclick="start()">Start</button>
         <button id="stop" onclick="stop()">Stop</button>
     </div>
-
 </div>
-
-
 </body>
 
 <script src="solarScript.js"></script>
+
 </html>

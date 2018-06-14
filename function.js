@@ -5,7 +5,7 @@
            ctx.fill();
            ctx.closePath();
 
-           console.log("clear");
+           console.log("clearGraph");
            ctx.beginPath();
            ctx.clearRect(x - r - 1, y - r - 1, r * 2 + 2, r * 2 + 2);
            ctx.closePath();
@@ -28,10 +28,10 @@
 
 /* setStyle() {
      let style = {'line': false, 'traj': false};
-     Astre.getStyleType();
-     if (Astre.getStyleType() === "line") {
+     Astre.getColorType();
+     if (Astre.getColorType() === "line") {
          style['line'] = true;
-     } else if (Astre.getStyleType() === "traj") {
+     } else if (Astre.getColorType() === "traj") {
          style['traj'] = true;
      } else {
          if (!this.sun) {
@@ -53,7 +53,7 @@ static getColorType() {
     }
 }
 */
-/*static getStyleType() {
+/*static getColorType() {
     let styletype = document.getElementsByName('style');
     let infostyle = document.getElementById("styleType");
     infostyle.innerHTML = "Aucun style";
